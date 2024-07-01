@@ -22,14 +22,6 @@ struct Token{
 
 Token *token; //?ポインタで持つとなんかうれしいのかわからん -> 連結リスト型っぽいわ普通に
 
-void error(char *fmt, ...){ //errorを出す関数
-    va_list ap; //?もうちょい勉強して 参考:https://qiita.com/kurasho/items/1f6e04ab98d70b582ab7
-    va_start(ap, fmt);
-    vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "\n");
-    exit(1);
-}
-
 char *user_input;
 
 void error_at(char *loc, char *fmt, ...){
@@ -37,11 +29,12 @@ void error_at(char *loc, char *fmt, ...){
     va_start(ap, fmt);
 
     int pos = loc - user_input;
+    // char型が1byteなので入力文字列の先頭アドレスから現在アドレスの差分が文字数を表している
     fprintf(stderr, "%s\n", user_input);
     fprintf(stderr, "%*s", pos, " ");
     fprintf(stderr, "^ ");
     vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "`\n");
+    fprintf(stderr, "\n");
     exit(1);
 }
 
@@ -54,16 +47,16 @@ bool consume(char op){
 
 void expect(char op){
     if(token->kind != TK_RESERVED || token->str[0] != op)
-    error_at(token->str, "'%c'ではありません", op);
+        error_at(token->str, "'%c'ではありません", op);
     token = token->next;
 }
 
 int expect_number(){
     if(token->kind != TK_NUM)
         error_at(token->str, "数ではありません");
-        int val = token->val;
-        token = token->next; //tokenはグローバル変数のような扱い
-        return val;
+    int val = token->val;
+    token = token->next; //tokenはグローバル変数のような扱
+    return val;
 }
 
 bool at_eof(){
@@ -100,7 +93,7 @@ Token *tokenize(char *p){
             continue;
         }
 
-        error_at(token->str, "トークナイズできません");
+        error_at(p, "トークナイズできません");
     }
 
     new_token(TK_EOF, cur, p);
@@ -114,7 +107,7 @@ int main(int argc, char **argv){
     }
 
     user_input = argv[1];
-    token = tokenize(argv[1]);
+    token = tokenize(user_input);
 
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
