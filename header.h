@@ -53,6 +53,7 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *expr();
 Node *mul();
+Node *unary();
 Node *primary();
 void gen(Node *node);
 
