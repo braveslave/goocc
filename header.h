@@ -14,6 +14,10 @@ typedef enum{
     ND_MUL,
     ND_DIV,
     ND_NUM,
+    ND_EQU,
+    ND_NEQ,
+    ND_SML,
+    ND_ESM,
 } NodeKind;
 
 // struct
@@ -25,6 +29,7 @@ struct Token{
     Token *next;
     int val;
     char *str;
+    int len;
 };
 
 struct Node{
@@ -41,17 +46,20 @@ extern char *user_input;
 // func
 // Tokenを触るやつら
 void error_at(char *loc, char *fmt, ...);
-bool consume(char op);
-void expect(char op);
+bool consume(char *op);
+void expect(char *op);
 int expect_number();
 bool at_eof();
-Token *new_token(TokenKind kind, Token *cur, char *str);
+Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *tokenize(char *p);
 
 // Nodeを触るやつら
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 Node *expr();
+Node *equality();
+Node *relational();
+Node *add();
 Node *mul();
 Node *unary();
 Node *primary();
