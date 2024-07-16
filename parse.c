@@ -24,9 +24,15 @@ bool consume(char *op){
     if(token->kind != TK_RESERVED ||
     strlen(op) != token->len ||
     memcmp(token->str, op, token->len)) // token->strとopの先頭token->len文字が一致したら0を返す
-    return false;
+        return false;
     token = token->next;
     return true;
+}
+
+bool consume_ident(){
+    if(token->kind == TK_IDENT)
+        return true;
+    return false; 
 }
 
 void expect(char *op){
@@ -41,8 +47,16 @@ int expect_number(){
     if(token->kind != TK_NUM)
         error_at(token->str, "数ではありません");
     int val = token->val;
-    token = token->next; //tokenはグローバル変数のような扱
+    token = token->next;
     return val;
+}
+
+char expect_ident(){
+    if(token->kind != TK_IDENT)
+        error_at(token->str, "ローカル変数ではありません");
+    char name = token->str[0];
+    token = token->next;
+    return name;
 }
 
 bool at_eof(){
@@ -76,8 +90,13 @@ Token *tokenize(char *p){
         }
 
         if(*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' ||
-        *p == '>' || *p == '<') {
+        *p == '>' || *p == '<' || *p == '=' || *p == ';') {
             cur = new_token(TK_RESERVED, cur, p++, 1);
+            continue;
+        }
+
+        if('a' <= *p && *p <= 'z'){
+            cur = new_token(TK_IDENT, cur, p++, 1);
             continue;
         }
 
@@ -109,8 +128,35 @@ Node *new_node_num(int val){
     return node;
 }
 
+Node *new_node_lvar(){
+    Node *node = calloc(1, sizeof(Node));
+    char name = expect_ident();
+    node->kind = ND_LVAR;
+    node->offset = (name - 'a' + 1) * 8;
+}
+
+void *program(){
+    int i = 0;
+    while(!at_eof())
+        code[i++] = stmt();
+    code[i] = NULL;
+}
+
+Node *stmt(){
+    Node *node = expr();
+    expect(";");
+    return node;
+}
+
 Node *expr(){
+    Node *node = assign();
+    return node;
+}
+
+Node *assign(){
     Node *node = equality();
+    if(consume("="))
+        node = new_node(ND_ASSIGN, node, assign());
     return node;
 }
 
@@ -179,5 +225,9 @@ Node *primary(){
         expect(")");
         return node;
     }
+
+    else if(consume_ident())
+        return new_node_lvar();
+
     return new_node_num(expect_number());
 }
