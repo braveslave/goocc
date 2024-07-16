@@ -8,7 +8,7 @@
 
 void gen_lval(Node *node){
     if(node->kind != ND_LVAR){
-        printf("左辺が変数ではありません");
+        printf("左辺が変数ではありません\n");
         exit(1);
     }
 
