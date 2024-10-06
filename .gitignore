@@ -2,7 +2,7 @@
 *.o
 tmp*
 a.out
-9cc
+goocc
 memo.md
 hoga.c
 .vscode
