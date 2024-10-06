@@ -2,15 +2,15 @@ CFLAGS=-std=c11 -g -static
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
-9cc: $(OBJS)
-	$(CC) -o 9cc $(OBJS) $(LDFLAGS)
+goocc: $(OBJS)
+	$(CC) -o goocc $(OBJS) $(LDFLAGS)
 
-$(OBJS): 9cc.h
+$(OBJS): goocc.h
 
-test: 9cc
+test: goocc
 	./test.sh
 
 clean:
-	rm -f 9cc *.o *~ tmp*
+	rm -f goocc *.o *~ tmp*
 
 .PHONY: test clean

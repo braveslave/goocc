@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "9cc.h"
+#include "goocc.h"
 
 void error_at(char *loc, char *fmt, ...){
     va_list ap;

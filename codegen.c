@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "9cc.h"
+#include "goocc.h"
 
 void gen_lval(Node *node){
     if(node->kind != ND_LVAR){
