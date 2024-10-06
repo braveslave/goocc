@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "9cc.h"
+#include "goocc.h"
 
 Token *token;
 char *user_input;
